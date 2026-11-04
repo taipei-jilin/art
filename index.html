@@ -555,6 +555,11 @@ function src(item, w = 1000) {
   if (item.fileId) return 'https:\/\/lh3.googleusercontent.com/d/' + item.fileId + '=w' + w;
   return item.url || '';
 }
+// 後台拖曳設定的露出位置（"x y" → object-position），沒設定就置中
+function focusStyle(a) {
+  const m = String(a.heroFocus || '').match(/^(\d+) (\d+)$/);
+  return m ? ` style="object-position:${m[1]}% ${m[2]}%"` : '';
+}
 function cover(a, w) {
   const list = itemsOf(a.id);
   const it = list.find(i => i.id === a.coverItemId) || list.find(i => i.type === 'image') || list[0];
@@ -635,7 +640,7 @@ function viewHome() {
       ${slides.map((a, i) => {
         const layout = ['left', 'right', 'full'].includes(a.heroLayout) ? a.heroLayout : 'left';
         const media = layout === 'full'
-          ? `<img src="${esc(cover(a, 2000))}" alt="">`
+          ? `<img src="${esc(cover(a, 2000))}" alt=""${focusStyle(a)}>`
           : `<div class="frame"><span class="tape"></span><img src="${esc(cover(a, 1400))}" alt="${esc(a.title)} 代表作品"></div>`;
         return `<article class="slide layout-${layout} ${i ? '' : 'on'}" style="${vars(a)}" aria-roledescription="投影片" aria-label="${i + 1} / ${slides.length}">
           <div class="slide-media">${media}</div>
@@ -683,7 +688,7 @@ function albumCard(a) {
   const list = itemsOf(a.id);
   return `<button class="album-card" style="${vars(a)}" data-go="album" data-id="${a.id}">
     <span class="tape"></span>
-    <span class="ac-media">${cover(a, 800) ? `<img loading="lazy" src="${esc(cover(a, 800))}" alt="">` : ''}</span>
+    <span class="ac-media">${cover(a, 800) ? `<img loading="lazy" src="${esc(cover(a, 800))}" alt=""${focusStyle(a)}>` : ''}</span>
     <span class="ac-body">
       <span class="ac-meta">${esc(yearLabel(a.year))}<i></i>${list.length} 件作品</span>
       <span class="ac-title">${esc(a.title)}</span>
